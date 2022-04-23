@@ -1,0 +1,36 @@
+---
+
+- name: Ensure OpenLDAP image is pulled
+  docker_image:
+    name: "{{ openldap_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ openldap_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor > 8 else openldap_docker_image_force_pull }}"
+  register: result
+  retries: "{{ matrix_container_retries_count }}"
+  delay: "{{ matrix_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure OpenLDAP paths exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ matrix_user_username }}"
+    group: "{{ matrix_user_groupname }}"
+  with_items:
+    - "{{ openldap_base_path }}"
+    - "{{ openldap_docker_src_files_path }}"
+    - "{{ openldap_ldif_dir_path }}"
+
+- name: Ensure openldap.service installed
+  template:
+    src: "{{ role_path }}/templates/systemd/matrix-openldap.service.j2"
+    dest: "{{ matrix_systemd_path }}/matrix-openldap.service"
+    mode: 0644
+  register: openldap_systemd_service_result
+
+- name: Ensure systemd reloaded after matrix-openldap.service installation
+  service:
+    daemon_reload: true
+  when: "openldap_systemd_service_result.changed|bool"

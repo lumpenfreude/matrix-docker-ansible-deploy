@@ -1,0 +1,40 @@
+matrix_sticker_manager_enabled: "{{ matrix_dimension_enabled }}"
+
+# You are required to specify an access token for sticker-manager to work.
+# For information on how to acquire an access token, visit https://t2bot.io/docs/access_tokens
+matrix_sticker_manager_access_token: ""
+
+# Whether to allow sticker-manager widgets serve websites with invalid or self signed SSL certificates
+matrix_sticker_manager_widgets_allow_self_signed_ssl_certificates: false
+
+matrix_sticker_manager_container_image_self_build: false
+matrix_sticker_manager_container_image_self_build_repo: "https://github.com/turt2live/matrix-sticker-manager.git"
+matrix_sticker_manager_container_image_self_build_branch: master
+
+matrix_sticker_manager_base_path: "{{ matrix_base_data_path }}/sticker-manager"
+matrix_sticker_manager_docker_src_files_path: "{{ matrix_base_data_path }}/docker-src/sticker-manager"
+
+matrix_sticker_manager_version: latest
+matrix_sticker_manager_docker_image: "{{ matrix_sticker_manager_docker_image_name_prefix }}turt2live/matrix-sticker-manager:{{ matrix_sticker_manager_version }}"
+matrix_sticker_manager_docker_image_name_prefix: "{{ 'localhost/' if matrix_sticker_manager_container_image_self_build else matrix_container_global_registry_prefix }}"
+matrix_sticker_manager_docker_image_force_pull: "{{ matrix_sticker_manager_docker_image.endswith(':latest') }}"
+
+# List of systemd services that matrix-sticker-manager.service depends on.
+matrix_sticker_manager_systemd_required_services_list: ['docker.service']
+
+# List of systemd services that matrix-sticker-manager.service wants
+matrix_sticker_manager_systemd_wanted_services_list: []
+
+# The user and group id correspond to the node user in the `turt2live/matrix-sticker-manager` image.
+matrix_sticker_manager_user_uid: '1000'
+matrix_sticker_manager_user_gid: '1000'
+
+# Controls whether the matrix-sticker-manager container exposes its HTTP port (tcp/8184 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:8184"), or empty string to not expose.
+matrix_sticker_manager_container_http_host_bind_port: ''
+
+# A list of extra arguments to pass to the container
+matrix_sticker_manager_container_extra_arguments: []
+
+matrix_sticker_manager_ui: "https://{{ matrix_server_fqn_dimension }}/stickers"

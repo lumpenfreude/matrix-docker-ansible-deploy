@@ -1,0 +1,25 @@
+---
+# openldap is an LDAP backend provider 
+# See: https://github.com/osixia/openldap
+
+openldap_enabled: true
+
+openldap_container_image_self_build: false
+openldap_container_image_self_build_repo: "https://github.com/osixia/openldap"
+
+openldap_docker_image: "{{ openldap_docker_image_name_prefix }}osixia/openldap:{{ openldap_docker_image_tag }}"
+openldap_docker_image_name_prefix: "{{ 'localhost/' if openldap_container_image_self_build else matrix_container_global_registry_prefix }}"
+openldap_docker_version: 1.5.0
+openldap_docker_image_tag: "{{ openldap_docker_version }}"
+openldap_base_path: "{{ matrix_base_data_path }}/openldap"
+openldap_docker_src_files_path: "{{ openldap_base_path }}/docker-src"
+openldap_ldif_dir_path: "{{ openldap_base_path }}/ldif"
+
+openldap_tls: true
+openldap_base_dn: ''
+openldap_admin_password: 'admin'
+openldap_organisation: ''
+openldap_domain: '{{  }}'
+openldap_rfc2307bis_schema: true
+openldap_container_server_bind_port: 389
+openldap_container_server_bind_tls_port: 636
