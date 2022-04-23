@@ -1,0 +1,11 @@
+---
+
+- name: Fail if required openldap settings not defined
+fail:
+  msg: >-
+    You need to define a required configuration setting (`{{ item }}`) for using OpenLDAP.
+when: "vars[item] == ''"
+with_items:
+  - "openldap_base_dn"
+  - "openldap_organisation"
+  - "openldap_admin_password"
