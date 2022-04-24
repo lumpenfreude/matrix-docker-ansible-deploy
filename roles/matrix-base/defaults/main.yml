@@ -43,6 +43,14 @@ matrix_server_fqn_dimension: "dimension.{{ matrix_domain }}"
 # For use with Go-NEB! (github callback url for example)
 matrix_server_fqn_bot_go_neb: "goneb.{{ matrix_domain }}"
 
+# for use with mail shit
+mail_username: "postmaster"
+mail_server_fqn: "mail.{{ matrix_domain }}"
+smtp_server_fqn: "smtp.{{ matrix_domain }}"
+imap_server_fqn: "imap.{{ matrix_domain }}"
+mail_user_username: "mail"
+email_for_updates: "{{mail_username }}@{{ matrix_domain }}"
+
 # This is where you access Jitsi.
 matrix_server_fqn_jitsi: "jitsi.{{ matrix_domain }}"
 

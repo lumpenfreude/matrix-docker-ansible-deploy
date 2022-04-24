@@ -1,0 +1,144 @@
+---
+# Tasks file for postfix
+
+- name: Install packages
+  apt:
+    state: latest
+    pkg:
+      - postfix
+      - postfix-pgsql
+    update_cache: yes
+
+- name: Delete default config
+  file:
+    state: absent
+    path: /etc/postfix/sasl/
+  tags: postfix
+
+- name: Create mail user
+  user:
+    name: vmail
+    home: /var/vmail
+
+- name: Create mail user sieve directory
+  file:
+    path: /var/vmail/sieve/global
+    state: directory
+    owner: vmail
+    group: vmail
+    mode: 0770
+
+- name: Create mail user mailbox directory
+  file:
+    path: /var/vmail/mailboxes
+    state: directory
+    owner: vmail
+    group: vmail
+    mode: 0770
+
+- name: Add hostname to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^127.0.1.1"
+    line: "127.0.1.1 {{ mail_fqdn }} {{ host }}"
+    state: present
+
+- name: Set mailname
+  copy:
+    dest: "/etc/mailname"
+    content: "{{ mail_fqdn }}"
+
+- name: Restart systemd-logind
+  service:
+    name: systemd-logind
+    state: restarted
+- name: Template main.cf
+  template:
+    src: templates/main.j2
+    dest: /etc/postfix/main.cf
+  tags: postfix
+
+- name: Copy master.cf
+  copy:
+    src: files/master.cf
+    dest: /etc/postfix/master.cf
+  tags: postfix
+
+- name: Create directory for sql config
+  file:
+    path: /etc/postfix/sql
+    state: directory
+    mode: "0640"
+  tags: postfix
+
+- name: Template accounts.cf
+  template:
+    src: templates/sql/accounts.jq
+    dest: /etc/postfix/sql/accounts.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Template aliases.cf
+  template:
+    src: templates/sql/aliases.jq
+    dest: /etc/postfix/sql/aliases.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Template domains.cf
+  template:
+    src: templates/sql/domains.jq
+    dest: /etc/postfix/sql/domains.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Template recipient-access.cf
+  template:
+    src: templates/sql/recipient-access.jq
+    dest: /etc/postfix/sql/recipient-access.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Template sender-login-maps.cf
+  template:
+    src: templates/sql/sender-login-maps.jq
+    dest: /etc/postfix/sql/sender-login-maps.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Template tls-policy.cf
+  template:
+    src: templates/sql/tls-policy.jq
+    dest: /etc/postfix/sql/tls-policy.cf
+    mode: "0640"
+  tags: postfix
+
+- name: Copy postscreen_access
+  copy:
+    src: files/postscreen_access
+    dest: /etc/postfix/postscreen_access
+  tags: postfix
+
+- name: Copy without_ptr
+  copy:
+    src: files/without_ptr
+    dest: /etc/postfix/without_ptr
+  tags: postfix
+
+- name: Copy submission_header_cleanup
+  copy:
+    src: files/submission_header_cleanup
+    dest: /etc/postfix/submission_header_cleanup
+  tags: postfix
+
+- name: Create postmap
+  command: postmap /etc/postfix/without_ptr
+  tags: postfix
+
+- name: Newaliases
+  command: newaliases
+  tags: postfix
+
+- name: Reload Postfix
+  command: systemctl reload postfix
+  tags: postfix
