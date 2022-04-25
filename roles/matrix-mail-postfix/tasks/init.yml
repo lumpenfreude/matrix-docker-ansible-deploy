@@ -1,0 +1,5 @@
+---
+
+- set_fact:
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['matrix-mail-dovecot.service'] }}"
+  when: matrix_mail_dovecot_enabled|bool
