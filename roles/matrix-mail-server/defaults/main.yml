@@ -1,1 +1,12 @@
-rspamd_recreate_dkim_key: false
+---
+matrix_mail_server_enabled: false
+matrix_mail_server_vmail_password: ""
+matrix_mail_server_rspamd_password: ""
+matrix_mail_server_rspamd_recreate_dkim_key: false
+matrix_mail_server_ip_address: "{{ ansible_default_ipv4.address }}"
+matrix_mail_server_username: "postmaster"
+matrix_mail_server_database_user: "vmail" 
+matrix_mail_server_database_password: ""
+matrix_mail_server_database_host: "matrix-postgres"
+matrix_mail_server_database_name: "vmail"
+matrix_mail_server_database_port: 5432

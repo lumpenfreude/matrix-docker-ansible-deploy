@@ -1,5 +1,7 @@
 ---
 
 - set_fact:
-    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['matrix-mail-dovecot.service'] }}"
-  when: matrix_mail_dovecot_enabled|bool
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['dovecot.service'] }}"
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['postfix.service'] }}"
+    matrix_systemd_services_list: "{{ matrix_systemd_services_list + ['rspamd.service'] }}"
+  when: matrix_mail_server_enabled|bool

@@ -10,6 +10,7 @@
     - matrix-awx
     - matrix-base
     - matrix-dynamic-dns
+    - matrix-mail-server
     - matrix-mailer
     - matrix-postgres
     - matrix-redis

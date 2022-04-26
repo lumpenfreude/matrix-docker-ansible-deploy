@@ -113,6 +113,14 @@
     mode: "0440"
   tags: redis
 
+- name: Reload postfix
+  command: systemctl reload postfix
+  tags: rspamd 
+
+- name: Reload dovecot
+  command: systemctl reload dovecot
+  tags: rspamd 
+
 - name: Reload Rspamd
   command: systemctl reload rspamd
   tags: rspamd

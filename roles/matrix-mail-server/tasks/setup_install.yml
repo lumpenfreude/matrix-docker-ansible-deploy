@@ -1,20 +1,11 @@
 ---
 # Tasks file for postfix
 
-- name: Add the rspamd apt key
-  apt_key:
-    url: https://rspamd.com/apt-stable/gpg.key
-    state: present
-
-- name: Add rspamd repository
-  apt_repository:
-    repo: "deb http://rspamd.com/apt-stable/ bullseye main"
-    state: present
-
 - name: Install packages
   apt:
     state: latest
     pkg:
+      - redis
       - postfix
       - postfix-pgsql
       - dovecot-core
@@ -57,13 +48,13 @@
   lineinfile:
     dest: /etc/hosts
     regexp: "^127.0.1.1"
-    line: "127.0.1.1 {{ mail_fqdn }} {{ host }}"
+    line: "127.0.1.1 {{ matrix_mail_server_fqn }} {{ matrix_domain }}"
     state: present
 
 - name: Set mailname
   copy:
     dest: "/etc/mailname"
-    content: "{{ mail_fqdn }}"
+    content: "{{ matrix_mail_server_fqn }}"
 
 - name: Restart systemd-logind
   service:
@@ -154,6 +145,10 @@
 
 - name: Newaliases
   command: newaliases
+  tags: postfix
+
+- name: restart Postfix
+  command: systemctl reload postfix
   tags: postfix
 
 - name: Delete default config
